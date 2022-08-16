@@ -50,6 +50,37 @@ public class LoginTests {
         // driver.close does not quit the driver, it only closes the Window
         // So, you really should be using driver.quit(), not driver.close()
     }
+    @Test
+    public void wrongPassword(){
+        WebDriverManager.chromedriver().setup();
+
+        WebDriver driver = new ChromeDriver();
+        driver.get("http://ec2-18-116-32-53.us-east-2.compute.amazonaws.com/");
+
+        WebElement userInput= driver.findElement(By.id("username"));
+        WebElement passInput= driver.findElement(By.id("password"));
+
+        userInput.sendKeys("john_doe");
+        passInput.sendKeys("aslkdjas");
+
+        WebElement loginButton = driver.findElement(By.id("login-btn"));
+        loginButton.click();
+
+
+
+        WebDriverWait wdw = new WebDriverWait(driver,Duration.ofSeconds(10));
+
+        WebElement errorMsg= driver.findElement(By.id("error-message"));
+        System.out.println(errorMsg.getText());
+        wdw.until(ExpectedConditions.presenceOfElementLocated(By.id("error-message")));
+
+        String actual = errorMsg.getText();
+        String expected = "Username and/or password is incorrect";
+        Assert.assertEquals(actual,expected);
+
+        driver.quit();
+
+    }
 
     @Test
     public void validUsernameInvalidPassword() {
